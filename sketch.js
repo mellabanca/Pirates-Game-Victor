@@ -12,6 +12,8 @@ var cannon;
 var angle;
 var cannonBall;
 var balls = [];
+var boat;
+var boats = [];
 
 //Função que usamos para carregar os arquivos
 function preload() {
@@ -31,7 +33,7 @@ function setup() {
     isStatic:true
   }
 
-  //Cria o corpo para o chão
+  //Crie o corpo para o chão
   ground= Bodies.rectangle(0,height-1, width*2,1,options);
   //Adiciona o corpo do chão ao mundo
   World.add(world,ground);
@@ -47,7 +49,8 @@ function setup() {
   angle = 20;
   //Cria o objeto de canhão com base na classe de Canhão
   cannon = new Cannon(180, 110, 130, 100, angle);
- 
+  
+
 }
 
 //Função de desenho
@@ -71,9 +74,12 @@ function draw() {
   image(towerImagem, tower.position.x, tower.position.y, 160, 310);
   //Termina a configuração da torre
   pop();
-
+  
   //Mostra o canhão
   cannon.display();
+
+  //Chama a função para criar e mostrar os navios
+  showBoats();
 
   //Mostra cada bala do canhão
   for(var i = 0; i < balls.length; i++){
@@ -101,5 +107,34 @@ function keyPressed(){
 function showCannonBalls(ball, i){
   if(ball){
     ball.display();
+  }
+}
+
+//Função que é chamada para criar todos os navios
+function showBoats(){
+  //Se não tem navio, cria o primeiro
+  //Se tem navio, cria os outros navios
+  if(boats.length > 0){
+    if(boats[boats.length-1] === undefined ||
+      boats[boats.length-1].body.position.x < width-300){
+      var positions = [-40,-60,-70,-20];
+      var position = random(positions);
+      //Cria os outros navios
+      var boat = new Boat(width, height-100, 170, 170, position);
+      boats.push(boat);
+    }
+    for(var i = 0; i < boats.length; i++){
+      if(boats[i]){
+        //Dar velocidade aos navios
+        Matter.Body.setVelocity(boats[i].body,{x:-0.9, y:0});
+        //Mostrar os navios
+        boats[i].display();
+      }
+    }
+
+  } else {
+    //Cria o navio
+    var boat = new Boat(width,height-60,170,170,-80);
+    boats.push(boat); 
   }
 }

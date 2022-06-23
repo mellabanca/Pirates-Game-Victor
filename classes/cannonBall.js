@@ -24,13 +24,13 @@ class CannonBall {
         //Cria uma variável para a posição do corpo
         var pos = this.body.position;
 
-        //Faz as configurações da imagem da bala de canhão
+        //Faz as configuraçöes da imagem da bala de canhão
         push();
         imageMode(CENTER);
         image(this.image, pos.x, pos.y, this.r, this.r);
         pop();
 
-        //Armazena as posições da bala para a trajetória
+        //Armazena as posicões da bala para a trajetória
         if(this.body.velocity.x > 0 && pos.x > 10){
             var position = [pos.x, pos.y];
             this.trajectory.push(position);
