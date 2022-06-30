@@ -50,7 +50,7 @@ function setup() {
   //Cria o objeto de canhão com base na classe de Canhão
   cannon = new Cannon(180, 110, 130, 100, angle);
   
-
+ 
 }
 
 //Função de desenho
@@ -84,6 +84,7 @@ function draw() {
   //Mostra cada bala do canhão
   for(var i = 0; i < balls.length; i++){
     showCannonBalls(balls[i],i);
+    collisionWithBoat(i);
   }
 
 }
@@ -107,6 +108,10 @@ function keyPressed(){
 function showCannonBalls(ball, i){
   if(ball){
     ball.display();
+    if(ball.body.position.x >= width ||
+       ball.body.position.y >= height-50){
+        ball.remove(i);
+       }
   }
 }
 
@@ -119,7 +124,7 @@ function showBoats(){
       boats[boats.length-1].body.position.x < width-300){
       var positions = [-40,-60,-70,-20];
       var position = random(positions);
-      //Cria os outros navios
+      //Cria os outros navio
       var boat = new Boat(width, height-100, 170, 170, position);
       boats.push(boat);
     }
@@ -127,14 +132,36 @@ function showBoats(){
       if(boats[i]){
         //Dar velocidade aos navios
         Matter.Body.setVelocity(boats[i].body,{x:-0.9, y:0});
-        //Mostrar os navios
+        //mostrar os navios
         boats[i].display();
       }
     }
 
   } else {
-    //Cria o navio
-    var boat = new Boat(width,height-60,170,170,-80);
-    boats.push(boat); 
+  //Cria o navio
+  var boat = new Boat(width,height-60,170,170,-80);
+  boats.push(boat);
+  }
+}
+
+//Função para detectar a colisão entre o navio e a bala de canhão
+function collisionWithBoat(index){
+  //Repetição para todos os navios
+  for(var i = 0; i < boats.length; i++){
+    //Verifica se existe bala de canhão e navio
+    if(balls[index] !== undefined &&
+      boats[i] !== undefined){
+        //Verifica a colisão entre a bala de canhão e navio
+        var collision = Matter.SAT.collides(balls[index].body, boats[i].body);
+        //Confere se aconteceu a colisão
+        if(collision.collided){
+          //Remove o navio
+          boats[i].remove(i);
+
+          //Apaga a bala de canhão
+          Matter.World.remove(world, balls[index].body);
+          delete balls[index];
+        }
+      }
   }
 }
